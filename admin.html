@@ -76,6 +76,8 @@ table.tb th{color:var(--muted);font-weight:650;font-size:.8rem}
 .ph .ac{position:absolute;bottom:0;left:0;right:0;display:flex;background:rgba(0,0,0,.62)}
 .ph .ac button{flex:1;border:0;background:none;color:#fff;padding:6px 2px;font-size:.72rem;cursor:pointer}
 .hint{color:var(--muted);font-size:.82rem}
+.merr{flex:1 0 100%;background:#fdecea;color:#a12622;border:1px solid #f1c0c0;border-radius:10px;padding:10px 12px;font-size:.9rem;text-align:left;word-break:break-word}
+.okk{color:var(--ok);font-weight:700}.nok{color:var(--bad);font-weight:700}
 .est{background:#f3f8f4;border:1px solid #cfe5d4;border-radius:10px;padding:10px 12px;font-size:.92rem;margin-top:6px}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;z-index:90;max-width:92vw;font-size:.92rem;display:none}
 .toast.bad{background:var(--bad)}
@@ -130,14 +132,14 @@ const S = {
   token: sessionStorage.getItem('sm_token') || '',
   user: JSON.parse(sessionStorage.getItem('sm_user') || 'null'),
   motor: [], jual: [], pros: [], set: {}, dash: null,
-  view: 'dash', fStatus: 'aktif', fQ: '', fBulan: '', fPros: 'Baru'
+  view: 'dash', fStatus: 'aktif', fQ: '', fBulan: '', fPros: 'semua'
 };
 
 /* ---------- util UI ---------- */
 let tt;
 function toast(msg, bad) {
   const t = $('toast'); t.textContent = msg; t.className = 'toast' + (bad ? ' bad' : ''); t.style.display = 'block';
-  clearTimeout(tt); tt = setTimeout(() => { t.style.display = 'none'; }, bad ? 5000 : 2600);
+  clearTimeout(tt); tt = setTimeout(() => { t.style.display = 'none'; }, bad ? 12000 : 2600);
 }
 let busyN = 0;
 function busy(on) {
@@ -149,14 +151,32 @@ async function api(action, params) {
   if (API_URL.indexOf('GANTI_') === 0) throw new Error('API_URL belum diisi pada admin.html');
   busy(true);
   try {
-    const r = await fetch(API_URL, {method: 'POST', body: JSON.stringify(Object.assign({action, token: S.token}, params || {}))});
-    const j = await r.json();
+    let r, txt;
+    try {
+      r = await fetch(API_URL, {method: 'POST', body: JSON.stringify(Object.assign({action, token: S.token}, params || {}))});
+      txt = await r.text();
+    } catch (e) {
+      throw new Error('Tidak dapat terhubung ke server (periksa internet atau API_URL). Rincian: ' + e.message);
+    }
+    let j;
+    try { j = JSON.parse(txt); }
+    catch (e) {
+      console.error('Respons bukan JSON', r.status, txt.slice(0, 800));
+      const cuplikan = txt.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200);
+      throw new Error('Server tidak mengembalikan data yang valid (HTTP ' + r.status + '). ' + (cuplikan ? 'Isi: ' + cuplikan : 'Respons kosong. Pastikan Web App di-deploy sebagai "Anyone" dan New version sudah dibuat.'));
+    }
     if (!j.ok) {
       if (j.error === 'SESI_HABIS') { logout(); throw new Error('Sesi berakhir, silakan login ulang'); }
       throw new Error(j.error || 'Terjadi kesalahan');
     }
     return j.data;
   } finally { busy(false); }
+}
+function modalErr(msg) {
+  let e = $('mErr');
+  if (!e) { e = document.createElement('div'); e.id = 'mErr'; e.className = 'merr'; e.setAttribute('role', 'alert'); $('mF').insertBefore(e, $('mF').firstChild); }
+  $('mF').style.display = 'flex';
+  e.innerHTML = '<b>Gagal.</b> ' + esc(msg);
 }
 function openModal(title, body, footer) {
   $('mT').textContent = title; $('mB').innerHTML = body; $('mF').innerHTML = footer || '';
@@ -383,11 +403,13 @@ async function saveMotor() {
   const F = ['Merek', 'Model', 'Tahun', 'Warna', 'NoPol', 'KM', 'CC', 'Transmisi', 'Kondisi', 'PajakSampai', 'HargaJual', 'HargaBeli', 'BiayaPerbaikan', 'Sumber', 'NamaPenjual', 'HPPenjual', 'TglBeli', 'Status', 'Deskripsi'];
   const motor = {}; F.forEach(k => { motor[k] = $('f_' + k).value; });
   if (editing) motor.ID = editing.ID;
-  if (!motor.Merek.trim() || !motor.Model.trim() || !motor.Tahun) { toast('Merek, Model, dan Tahun wajib diisi', true); return; }
-  const btn = $('mSave'); btn.disabled = true; btn.textContent = 'Menyimpan...';
+  if (!motor.Merek.trim() || !motor.Model.trim() || !motor.Tahun) { modalErr('Merek, Model, dan Tahun wajib diisi.'); return; }
+  const btn = $('mSave'); btn.disabled = true; btn.textContent = 'Menyimpan data motor...';
+  const e0 = $('mErr'); if (e0) e0.remove();
+  const reset = () => { btn.disabled = false; btn.textContent = 'Simpan'; };
   let saved;
   try { saved = await api('motorSave', {motor}); }
-  catch (err) { toast(err.message, true); btn.disabled = false; btn.textContent = 'Simpan'; return; }
+  catch (err) { modalErr('Langkah 1 (simpan data motor): ' + err.message); toast('Gagal menyimpan data motor', true); reset(); return; }
   const gagal = []; let n = 0;
   for (const p of pend) {
     n++; btn.textContent = `Unggah foto ${n}/${pend.length}...`;
@@ -396,16 +418,18 @@ async function saveMotor() {
       await api('fotoUpload', {motorId: saved.ID, data});
     } catch (err) { gagal.push({p, msg: err.message}); }
   }
-  S.motor = await api('motorList');
+  try { S.motor = await api('motorList'); }
+  catch (err) { modalErr('Data motor SUDAH tersimpan (' + saved.Kode + '), tetapi gagal memuat ulang daftar: ' + err.message); reset(); return; }
   const fresh = S.motor.find(x => x.ID === saved.ID);
+  if (S.view === 'stok') listStok();
   if (gagal.length) {
     const keepP = gagal.map(g => g.p);
     pend.forEach(p => { if (!keepP.includes(p)) URL.revokeObjectURL(p.url); });
     pend = keepP;
     motorModal(fresh, true);
-    toast(`${gagal.length} foto gagal diunggah: ${gagal[0].msg}. Data lain sudah tersimpan.`, true);
-  } else { closeModal(); toast('Motor tersimpan'); }
-  if (S.view === 'stok') listStok();
+    modalErr('Data motor ' + saved.Kode + ' sudah tersimpan, tetapi ' + gagal.length + ' foto gagal diunggah. Penyebab: ' + gagal[0].msg + ' Klik Simpan lagi untuk mencoba mengunggah ulang foto.');
+    toast('Sebagian foto gagal diunggah', true);
+  } else { closeModal(); toast('Motor ' + saved.Kode + ' tersimpan'); }
 }
 
 /* ---------- PENJUALAN ---------- */
@@ -440,7 +464,7 @@ function jualModal(m) {
         `<button class="btn ghost" id="mCancel" type="button">Tutup</button><button class="btn" id="mPrint" type="button">Cetak Kwitansi</button>`);
       $('mCancel').onclick = closeModal;
       $('mPrint').onclick = () => kwitansi(rec);
-    } catch (err) { toast(err.message, true); btn.disabled = false; }
+    } catch (err) { modalErr(err.message); btn.disabled = false; }
   };
 }
 function viewJual() {
@@ -525,7 +549,7 @@ function kwitansi(j) {
 /* ---------- PROSPEK ---------- */
 function viewPros() {
   $('view').innerHTML = `<h2 class="t">Prospek & Penawaran</h2>
-  <div class="tool"><select id="pf" style="width:auto"><option value="Baru">Baru</option><option value="Dihubungi">Dihubungi</option><option value="Selesai">Selesai</option><option value="semua">Semua</option></select></div>
+  <div class="tool"><select id="pf" style="width:auto"><option value="semua">Semua</option><option value="Baru">Baru</option><option value="Dihubungi">Dihubungi</option><option value="Selesai">Selesai</option></select></div>
   <div id="plist"></div>`;
   $('pf').value = S.fPros;
   $('pf').onchange = e => { S.fPros = e.target.value; listPros(); };
@@ -571,7 +595,11 @@ async function viewSet() {
     <div class="g2"><div class="fg"><label>PIN lama</label><input id="p_lama" type="password" inputmode="numeric" autocomplete="current-password"></div>
     <div class="fg"><label>PIN baru (6-12 digit)</label><input id="p_baru" type="password" inputmode="numeric" autocomplete="new-password"></div></div>
     <button class="btn" id="pSave">Ganti PIN</button></div>
+  <div class="panel"><h3>Tes koneksi sistem <span class="hint">(versi admin.html: 2)</span></h3>
+    <div class="hint" style="margin-bottom:8px">Menguji setiap bagian backend satu per satu. Bila ada yang gagal, kirim screenshot hasilnya.</div>
+    <button class="btn ghost" id="tesBtn">Jalankan tes</button><div id="tesOut" style="margin-top:10px;font-size:.92rem"></div></div>
   <div id="adminBox"></div>`;
+  $('tesBtn').onclick = tesKoneksi;
   if (sup) $('sSave').onclick = async () => {
     const settings = {}; ['NamaShowroom', 'WhatsApp', 'Tagline', 'Alamat', 'JamBuka', 'MapsUrl'].forEach(k => { settings[k] = $('s_' + k).value; });
     try { S.set = await api('settingsSave', {settings}); $('bName').textContent = S.set.NamaShowroom; toast('Profil tersimpan'); } catch (err) { toast(err.message, true); }
@@ -580,6 +608,24 @@ async function viewSet() {
     try { await api('pinGanti', {pinLama: $('p_lama').value, pinBaru: $('p_baru').value}); $('p_lama').value = ''; $('p_baru').value = ''; toast('PIN berhasil diganti'); } catch (err) { toast(err.message, true); }
   };
   if (sup) await drawAdmins();
+}
+async function tesKoneksi() {
+  const out = $('tesOut'); $('tesBtn').disabled = true; out.innerHTML = 'Menguji...';
+  const uji = [
+    ['Katalog publik (list)', async () => { const d = await api('list'); return d.motor.length + ' motor tampil di katalog'; }],
+    ['Data motor (motorList)', async () => { const d = await api('motorList'); return d.length + ' baris di tab Motor'; }],
+    ['Penjualan', async () => { const d = await api('penjualanList'); return d.length + ' transaksi'; }],
+    ['Prospek', async () => { const d = await api('prospekList'); return d.length + ' prospek'; }],
+    ['Dashboard', async () => { const d = await api('dashboard'); return d.stokUnit + ' unit siap jual'; }]
+  ];
+  let html = '';
+  for (const [nama, fn] of uji) {
+    const t0 = performance.now();
+    try { const info = await fn(); html += `<div><span class="okk">OK</span> ${esc(nama)} - ${esc(info)} (${Math.round(performance.now() - t0)} ms)</div>`; }
+    catch (e) { html += `<div><span class="nok">GAGAL</span> ${esc(nama)}: ${esc(e.message)}</div>`; }
+    out.innerHTML = html + '<div class="hint">Menguji...</div>';
+  }
+  out.innerHTML = html; $('tesBtn').disabled = false;
 }
 async function drawAdmins() {
   const list = await api('adminList');
@@ -605,7 +651,7 @@ function adminModal(a) {
     try {
       await api('adminSave', {admin: {Username: $('a_u').value, Nama: $('a_n').value, Role: $('a_r').value, Aktif: $('a_a').value, Pin: $('a_p').value}});
       closeModal(); toast('Admin tersimpan'); drawAdmins();
-    } catch (err) { toast(err.message, true); }
+    } catch (err) { modalErr(err.message); }
   };
 }
 
