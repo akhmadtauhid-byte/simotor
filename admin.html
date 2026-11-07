@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin - Jual Beli Motor</title>
+<style>
+:root{--ink:#16202b;--muted:#5d6b7a;--line:#e1ddd3;--bg:#f3f1ec;--card:#fff;--brand:#d9480f;--brand-d:#b83a0a;--ok:#2b8a3e;--warn:#e67700;--bad:#c92a2a;--r:12px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:10px;padding:10px 16px;font-weight:650;cursor:pointer;background:var(--brand);color:#fff;transition:.15s;min-height:42px}
+.btn:hover{background:var(--brand-d)}
+.btn.sm{padding:6px 12px;min-height:34px;font-size:.88rem}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}.btn.ghost:hover{background:#ece8df}
+.btn.ok{background:var(--ok)}.btn.bad{background:#fff;color:var(--bad);border:1.5px solid #f1c0c0}.btn.bad:hover{background:#fdecea}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+input,select,textarea{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;min-height:42px}
+input:focus,select:focus,textarea:focus,.btn:focus-visible{outline:2px solid var(--brand);outline-offset:1px}
+textarea{min-height:84px;resize:vertical}
+label{display:block;font-size:.82rem;font-weight:650;margin-bottom:4px;color:#3a4856}
+/* login */
+#login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.lbox{background:#fff;border-radius:20px;padding:30px 26px;width:100%;max-width:380px;border:1px solid var(--line);box-shadow:0 14px 40px rgba(22,32,43,.08)}
+.lbox h1{font-size:1.4rem;margin-bottom:4px}.lbox p{color:var(--muted);margin-bottom:18px;font-size:.93rem}
+.lbox .f{margin-bottom:12px}
+#lerr{color:var(--bad);font-size:.9rem;min-height:1.3em;margin:6px 0}
+/* app */
+#app{display:none}
+.bar{background:var(--ink);color:#fff;position:sticky;top:0;z-index:20}
+.bar .in{max-width:1200px;margin:0 auto;padding:0 14px;display:flex;align-items:center;gap:12px;height:54px}
+.bar b{font-size:1.02rem}.bar .sp{flex:1}.bar small{color:#aab6c2}
+.bar .btn{background:#2b3846;min-height:34px;padding:5px 12px;font-size:.86rem}.bar .btn:hover{background:#3a4a5c}
+.tabs{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:54px;z-index:19}
+.tabs .in{max-width:1200px;margin:0 auto;padding:0 10px;display:flex;gap:2px;overflow-x:auto}
+.tabs button{border:0;background:none;padding:13px 14px;font-weight:650;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tabs button.on{color:var(--brand);border-color:var(--brand)}
+main{max-width:1200px;margin:0 auto;padding:16px 14px 80px}
+h2.t{font-size:1.25rem;margin:4px 0 12px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:16px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.tile small{color:var(--muted);display:block;font-size:.8rem}.tile b{font-size:1.35rem;display:block;margin-top:2px;word-break:break-word}
+.panel{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px}
+.panel h3{font-size:1rem;margin-bottom:10px}
+table.tb{width:100%;border-collapse:collapse;font-size:.9rem}
+table.tb th,table.tb td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+table.tb th{color:var(--muted);font-weight:650;font-size:.8rem}
+.r{text-align:right!important}
+.barc{height:10px;border-radius:5px;background:#ece8df;overflow:hidden;min-width:70px}.barc i{display:block;height:100%;background:var(--brand);border-radius:5px}
+.tool{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.tool input{flex:1;min-width:180px}.tool select{width:auto;min-width:150px}
+.row{display:grid;grid-template-columns:72px 1fr auto;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:10px;margin-bottom:8px}
+.row img{width:72px;height:56px;object-fit:cover;border-radius:8px;background:#e9e5db;display:block}
+.row h4{font-size:.98rem}.row .m{color:var(--muted);font-size:.82rem}
+.row .p{font-weight:800;color:var(--brand)}
+.acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.bdg{display:inline-block;font-size:.72rem;font-weight:700;padding:2px 9px;border-radius:999px;background:#e6f4ea;color:#1e6b34}
+.bdg.Booking,.bdg.Dihubungi{background:#fff3d6;color:#8a5a00}.bdg.Terjual,.bdg.Selesai{background:#e3e8ef;color:#394a5f}.bdg.Nonaktif{background:#eee;color:#666}.bdg.Baru{background:#fde8e1;color:#a63a10}.bdg.Beli{background:#e3f0ff;color:#1c5aa6}.bdg.Jual{background:#f1e8ff;color:#5b2a9e}
+.empty{text-align:center;color:var(--muted);padding:40px 10px}
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(15,22,30,.6);z-index:50;display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:14px 10px}
+.ov.on{display:flex}
+.md{background:#fff;border-radius:16px;width:100%;max-width:760px;margin:auto;overflow:hidden}
+.md .h{display:flex;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:2}
+.md .h b{flex:1;font-size:1.05rem}.md .h button{border:0;background:none;font-size:1.6rem;cursor:pointer;width:38px;height:38px}
+.md .bd{padding:16px 18px}.md .ft{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;background:#faf9f6}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.full{grid-column:1/-1}
+.sec{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:16px 0 8px;font-weight:700}
+.fg{margin-bottom:10px}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:8px}
+.ph{position:relative;border-radius:10px;overflow:hidden;border:1.5px solid var(--line);aspect-ratio:4/3;background:#e9e5db}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph .tg{position:absolute;top:4px;left:4px;background:var(--brand);color:#fff;font-size:.66rem;padding:1px 7px;border-radius:999px;font-weight:700}
+.ph .tg.n{background:var(--warn)}
+.ph .ac{position:absolute;bottom:0;left:0;right:0;display:flex;background:rgba(0,0,0,.62)}
+.ph .ac button{flex:1;border:0;background:none;color:#fff;padding:6px 2px;font-size:.72rem;cursor:pointer}
+.hint{color:var(--muted);font-size:.82rem}
+.est{background:#f3f8f4;border:1px solid #cfe5d4;border-radius:10px;padding:10px 12px;font-size:.92rem;margin-top:6px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;z-index:90;max-width:92vw;font-size:.92rem;display:none}
+.toast.bad{background:var(--bad)}
+.load{position:fixed;top:0;left:0;height:3px;background:var(--brand);z-index:99;width:0;transition:width .4s}
+.sel{outline:2px solid var(--brand)}
+@media(max-width:620px){.g2,.g3{grid-template-columns:1fr}.row{grid-template-columns:60px 1fr}.row img{width:60px;height:48px}.row .acts{grid-column:1/-1;justify-content:flex-start}}
+</style>
+</head>
+<body>
+<div class="load" id="load"></div>
+
+<section id="login">
+  <form class="lbox" id="lform">
+    <h1>Admin Showroom</h1>
+    <p>Masuk dengan username dan PIN Anda.</p>
+    <div class="f"><label for="lu">Username</label><input id="lu" autocomplete="username" autocapitalize="none" required></div>
+    <div class="f"><label for="lp">PIN</label><input id="lp" type="password" inputmode="numeric" autocomplete="current-password" required></div>
+    <div id="lerr" role="alert"></div>
+    <button class="btn" style="width:100%" id="lbtn" type="submit">Masuk</button>
+  </form>
+</section>
+
+<div id="app">
+  <div class="bar"><div class="in"><b id="bName">Admin</b><span class="sp"></span><small id="bUser"></small><button class="btn" id="bOut" type="button">Keluar</button></div></div>
+  <div class="tabs"><div class="in" id="tabs">
+    <button data-v="dash">Dashboard</button><button data-v="stok">Stok Motor</button><button data-v="jual">Penjualan</button><button data-v="pros">Prospek</button><button data-v="set">Pengaturan</button>
+  </div></div>
+  <main id="view"></main>
+</div>
+
+<div class="ov" id="ov"><div class="md" role="dialog" aria-modal="true"><div class="h"><b id="mT"></b><button id="mX" aria-label="Tutup" type="button">&times;</button></div><div class="bd" id="mB"></div><div class="ft" id="mF"></div></div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+// ====== WAJIB DIISI: URL Web App Apps Script (berakhiran /exec) ======
+const API_URL = 'GANTI_DENGAN_API_URL';
+// =====================================================================
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nf = n => new Intl.NumberFormat('id-ID').format(Number(n) || 0);
+const rp = n => 'Rp ' + nf(n);
+const PH = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="#e9e5db"/><g fill="none" stroke="#b9b3a3" stroke-width="8" stroke-linecap="round"><circle cx="120" cy="190" r="42"/><circle cx="285" cy="190" r="42"/><path d="M120 190l55-70h60l50 70M175 120l-12-22h-28M235 120l-8 30h-52"/></g></svg>');
+const img = (id, w) => id ? `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w${w || 400}` : PH;
+const today = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+const fmtTgl = s => { if (!s) return '-'; const d = new Date(String(s).slice(0, 10) + 'T00:00:00'); return isNaN(d) ? s : d.toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'}); };
+const bulanNama = k => { const d = new Date(k + '-01T00:00:00'); return d.toLocaleDateString('id-ID', {month: 'short', year: 'numeric'}); };
+const waNum = h => { let n = String(h || '').replace(/\D/g, ''); if (n.startsWith('0')) n = '62' + n.slice(1); return n; };
+const imgErr = `onerror="this.onerror=null;this.src='${PH}'"`;
+
+const S = {
+  token: sessionStorage.getItem('sm_token') || '',
+  user: JSON.parse(sessionStorage.getItem('sm_user') || 'null'),
+  motor: [], jual: [], pros: [], set: {}, dash: null,
+  view: 'dash', fStatus: 'aktif', fQ: '', fBulan: '', fPros: 'Baru'
+};
+
+/* ---------- util UI ---------- */
+let tt;
+function toast(msg, bad) {
+  const t = $('toast'); t.textContent = msg; t.className = 'toast' + (bad ? ' bad' : ''); t.style.display = 'block';
+  clearTimeout(tt); tt = setTimeout(() => { t.style.display = 'none'; }, bad ? 5000 : 2600);
+}
+let busyN = 0;
+function busy(on) {
+  busyN = Math.max(0, busyN + (on ? 1 : -1));
+  $('load').style.width = busyN ? '70%' : '100%';
+  if (!busyN) setTimeout(() => { if (!busyN) $('load').style.width = '0'; }, 350);
+}
+async function api(action, params) {
+  if (API_URL.indexOf('GANTI_') === 0) throw new Error('API_URL belum diisi pada admin.html');
+  busy(true);
+  try {
+    const r = await fetch(API_URL, {method: 'POST', body: JSON.stringify(Object.assign({action, token: S.token}, params || {}))});
+    const j = await r.json();
+    if (!j.ok) {
+      if (j.error === 'SESI_HABIS') { logout(); throw new Error('Sesi berakhir, silakan login ulang'); }
+      throw new Error(j.error || 'Terjadi kesalahan');
+    }
+    return j.data;
+  } finally { busy(false); }
+}
+function openModal(title, body, footer) {
+  $('mT').textContent = title; $('mB').innerHTML = body; $('mF').innerHTML = footer || '';
+  $('mF').style.display = footer ? 'flex' : 'none';
+  $('ov').classList.add('on'); document.body.style.overflow = 'hidden';
+  $('ov').scrollTop = 0;
+}
+function closeModal() { $('ov').classList.remove('on'); document.body.style.overflow = ''; pend.forEach(p => URL.revokeObjectURL(p.url)); pend = []; }
+$('mX').onclick = closeModal;
+$('ov').addEventListener('mousedown', e => { if (e.target === $('ov')) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('ov').classList.contains('on')) closeModal(); });
+
+/* ---------- auth ---------- */
+function showApp() {
+  $('login').style.display = 'none'; $('app').style.display = 'block';
+  $('bUser').textContent = S.user.nama + ' (' + S.user.role + ')';
+  go(S.view);
+}
+function logout() {
+  S.token = ''; S.user = null; sessionStorage.removeItem('sm_token'); sessionStorage.removeItem('sm_user');
+  $('app').style.display = 'none'; $('login').style.display = 'grid'; $('lp').value = '';
+  if ($('ov').classList.contains('on')) closeModal();
+}
+$('bOut').onclick = logout;
+$('lform').addEventListener('submit', async e => {
+  e.preventDefault(); $('lerr').textContent = ''; $('lbtn').disabled = true;
+  try {
+    const d = await api('login', {username: $('lu').value, pin: $('lp').value});
+    S.token = d.token; S.user = d.user;
+    sessionStorage.setItem('sm_token', d.token); sessionStorage.setItem('sm_user', JSON.stringify(d.user));
+    showApp();
+  } catch (err) { $('lerr').textContent = err.message; }
+  $('lbtn').disabled = false;
+});
+
+/* ---------- navigasi ---------- */
+$('tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) go(b.dataset.v); });
+async function go(v) {
+  S.view = v;
+  [...$('tabs').querySelectorAll('button')].forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  $('view').innerHTML = '<div class="empty">Memuat...</div>';
+  try {
+    if (!S.set.NamaShowroom) { S.set = await api('settingsGet'); $('bName').textContent = S.set.NamaShowroom || 'Admin'; }
+    if (v === 'dash') { S.dash = await api('dashboard'); viewDash(); }
+    else if (v === 'stok') { S.motor = await api('motorList'); viewStok(); }
+    else if (v === 'jual') { const r = await Promise.all([api('penjualanList'), S.motor.length ? S.motor : api('motorList')]); S.jual = r[0]; S.motor = r[1]; viewJual(); }
+    else if (v === 'pros') { S.pros = await api('prospekList'); viewPros(); }
+    else if (v === 'set') { await viewSet(); }
+  } catch (err) { if (S.token) $('view').innerHTML = '<div class="empty">' + esc(err.message) + '<br><br><button class="btn" onclick="go(S.view)">Coba lagi</button></div>'; }
+}
+
+/* ---------- DASHBOARD ---------- */
+function viewDash() {
+  const d = S.dash, maxO = Math.max(1, ...d.bulanan.map(b => b.omzet));
+  $('view').innerHTML = `
+  <h2 class="t">Ringkasan</h2>
+  <div class="tiles">
+    <div class="tile"><small>Stok siap jual</small><b>${d.stokUnit} unit</b></div>
+    <div class="tile"><small>Sedang booking</small><b>${d.booking} unit</b></div>
+    <div class="tile"><small>Terjual bulan ini</small><b>${d.terjualBulanIni} unit</b></div>
+    <div class="tile"><small>Omzet bulan ini</small><b>${rp(d.omzetBulanIni)}</b></div>
+    <div class="tile"><small>Laba bulan ini</small><b>${rp(d.labaBulanIni)}</b></div>
+    <div class="tile"><small>Modal tertanam di stok</small><b>${rp(d.nilaiStok)}</b></div>
+    <div class="tile" style="cursor:pointer" data-go="pros"><small>Prospek baru</small><b>${d.prospekBaru}</b></div>
+  </div>
+  <div class="panel"><h3>6 bulan terakhir</h3>
+    <table class="tb"><thead><tr><th>Bulan</th><th class="r">Unit</th><th class="r">Omzet</th><th>&nbsp;</th><th class="r">Laba</th></tr></thead><tbody>
+    ${d.bulanan.map(b => `<tr><td>${bulanNama(b.bulan)}</td><td class="r">${b.unit}</td><td class="r">${rp(b.omzet)}</td><td><div class="barc"><i style="width:${Math.round(b.omzet / maxO * 100)}%"></i></div></td><td class="r">${rp(b.laba)}</td></tr>`).join('')}
+    </tbody></table></div>
+  <div class="panel"><h3>Stok paling lama (perlu diprioritaskan)</h3>
+    ${d.terlama.length ? `<table class="tb"><tbody>${d.terlama.map(t => `<tr><td>${esc(t.Kode)}</td><td>${esc(t.Nama)}</td><td class="r">${t.Hari} hari</td></tr>`).join('')}</tbody></table>` : '<div class="hint">Isi tanggal beli pada data motor agar umur stok terhitung.</div>'}
+  </div>`;
+  $('view').querySelector('[data-go]').onclick = e => go(e.currentTarget.dataset.go);
+}
+
+/* ---------- STOK ---------- */
+function viewStok() {
+  $('view').innerHTML = `
+  <h2 class="t">Stok Motor</h2>
+  <div class="tool">
+    <input id="sq" type="search" placeholder="Cari kode, merek, model, no. polisi..." value="${esc(S.fQ)}">
+    <select id="ss"><option value="aktif">Aktif (Tersedia + Booking)</option><option>Tersedia</option><option>Booking</option><option>Terjual</option><option>Nonaktif</option><option value="semua">Semua</option></select>
+    <button class="btn" id="sadd">+ Tambah Motor</button>
+  </div>
+  <div id="slist"></div>`;
+  $('ss').value = S.fStatus;
+  $('sq').oninput = e => { S.fQ = e.target.value; listStok(); };
+  $('ss').onchange = e => { S.fStatus = e.target.value; listStok(); };
+  $('sadd').onclick = () => motorModal(null);
+  $('slist').addEventListener('click', onStokClick);
+  listStok();
+}
+function listStok() {
+  const f = S.fStatus, q = S.fQ.trim().toLowerCase();
+  const list = S.motor.filter(m => f === 'semua' || (f === 'aktif' ? (m.Status === 'Tersedia' || m.Status === 'Booking') : m.Status === f))
+    .filter(m => !q || (m.Kode + ' ' + m.Merek + ' ' + m.Model + ' ' + m.NoPol + ' ' + m.Warna).toLowerCase().includes(q));
+  $('slist').innerHTML = list.length ? list.map(m => {
+    const modal = Number(m.HargaBeli || 0) + Number(m.BiayaPerbaikan || 0);
+    const bisaJual = m.Status === 'Tersedia' || m.Status === 'Booking';
+    return `<div class="row">
+      <img src="${img(m.Foto[0], 200)}" alt="" loading="lazy" ${imgErr}>
+      <div><h4>${esc(m.Merek)} ${esc(m.Model)} ${esc(m.Tahun)} <span class="bdg ${esc(m.Status)}">${esc(m.Status)}</span></h4>
+        <div class="m">${esc(m.Kode)} &middot; ${esc(m.NoPol || 'tanpa plat')} &middot; ${nf(m.KM)} km &middot; ${m.Foto.length} foto</div>
+        <div class="m">Modal ${rp(modal)}${m.TglBeli ? ' &middot; beli ' + fmtTgl(m.TglBeli) : ''}</div>
+        <div class="p">${rp(m.HargaJual)}</div></div>
+      <div class="acts">
+        <button class="btn sm ghost" data-a="edit" data-id="${m.ID}">Edit</button>
+        ${bisaJual ? `<button class="btn sm ok" data-a="jual" data-id="${m.ID}">Jual</button>` : ''}
+        ${m.Status !== 'Terjual' ? `<button class="btn sm bad" data-a="del" data-id="${m.ID}">Hapus</button>` : ''}
+      </div></div>`;
+  }).join('') : '<div class="empty">Belum ada motor pada filter ini.</div>';
+}
+function onStokClick(e) {
+  const b = e.target.closest('button[data-a]'); if (!b) return;
+  const m = S.motor.find(x => x.ID === b.dataset.id);
+  if (b.dataset.a === 'edit') motorModal(m);
+  if (b.dataset.a === 'jual') jualModal(m);
+  if (b.dataset.a === 'del') hapusMotor(m);
+}
+async function hapusMotor(m) {
+  if (!confirm(`Hapus ${m.Kode} ${m.Merek} ${m.Model}? Foto ikut dihapus dan tidak bisa dikembalikan.`)) return;
+  try { await api('motorDelete', {id: m.ID}); S.motor = S.motor.filter(x => x.ID !== m.ID); listStok(); toast('Motor dihapus'); } catch (err) { toast(err.message, true); }
+}
+
+/* ---------- FORM MOTOR + FOTO ---------- */
+let pend = [], editing = null, curFotos = [];
+const opt = (arr, v) => arr.map(x => `<option ${x === v ? 'selected' : ''}>${esc(x)}</option>`).join('');
+function motorModal(m, keep) {
+  if (!keep) { pend.forEach(p => URL.revokeObjectURL(p.url)); pend = []; }
+  editing = m; curFotos = m ? m.Foto.slice() : [];
+  const v = k => esc(m && m[k] != null ? m[k] : '');
+  const mereks = [...new Set(S.motor.map(x => x.Merek).filter(Boolean))];
+  openModal(m ? 'Edit ' + m.Kode : 'Tambah Motor', `
+  <datalist id="dlMerek">${mereks.map(x => `<option value="${esc(x)}">`).join('')}</datalist>
+  <div class="sec" style="margin-top:0">Data motor</div>
+  <div class="g3">
+    <div class="fg"><label>Merek *</label><input id="f_Merek" list="dlMerek" value="${v('Merek')}" placeholder="Honda"></div>
+    <div class="fg"><label>Model *</label><input id="f_Model" value="${v('Model')}" placeholder="Vario 125"></div>
+    <div class="fg"><label>Tahun *</label><input id="f_Tahun" type="number" inputmode="numeric" value="${v('Tahun')}" placeholder="2020"></div>
+    <div class="fg"><label>Warna</label><input id="f_Warna" value="${v('Warna')}"></div>
+    <div class="fg"><label>No. Polisi</label><input id="f_NoPol" value="${v('NoPol')}" placeholder="R 1234 AB"></div>
+    <div class="fg"><label>Kilometer</label><input id="f_KM" type="number" inputmode="numeric" value="${v('KM')}"></div>
+    <div class="fg"><label>Kapasitas (cc)</label><input id="f_CC" type="number" inputmode="numeric" value="${v('CC')}"></div>
+    <div class="fg"><label>Transmisi</label><select id="f_Transmisi"><option value="">-</option>${opt(['Matic', 'Manual', 'Semi-otomatis'], m && m.Transmisi)}</select></div>
+    <div class="fg"><label>Kondisi</label><select id="f_Kondisi"><option value="">-</option>${opt(['Sangat Baik', 'Baik', 'Cukup', 'Perlu Perbaikan'], m && m.Kondisi)}</select></div>
+    <div class="fg"><label>Pajak berlaku s/d</label><input id="f_PajakSampai" type="date" value="${v('PajakSampai')}"></div>
+    <div class="fg"><label>Status</label><select id="f_Status">${opt(['Tersedia', 'Booking', 'Nonaktif'].concat(m && m.Status === 'Terjual' ? ['Terjual'] : []), m ? m.Status : 'Tersedia')}</select></div>
+  </div>
+  <div class="sec">Harga</div>
+  <div class="g3">
+    <div class="fg"><label>Harga jual (Rp)</label><input id="f_HargaJual" type="number" inputmode="numeric" value="${v('HargaJual')}"></div>
+    <div class="fg"><label>Harga beli (Rp)</label><input id="f_HargaBeli" type="number" inputmode="numeric" value="${v('HargaBeli')}"></div>
+    <div class="fg"><label>Biaya perbaikan (Rp)</label><input id="f_BiayaPerbaikan" type="number" inputmode="numeric" value="${v('BiayaPerbaikan')}"></div>
+  </div>
+  <div class="est" id="estLaba"></div>
+  <div class="sec">Asal motor</div>
+  <div class="g3">
+    <div class="fg"><label>Sumber</label><select id="f_Sumber"><option value="">-</option>${opt(['Beli Putus', 'Titip Jual', 'Tukar Tambah'], m && m.Sumber)}</select></div>
+    <div class="fg"><label>Nama penjual</label><input id="f_NamaPenjual" value="${v('NamaPenjual')}"></div>
+    <div class="fg"><label>HP penjual</label><input id="f_HPPenjual" inputmode="tel" value="${v('HPPenjual')}"></div>
+    <div class="fg"><label>Tanggal beli/masuk</label><input id="f_TglBeli" type="date" value="${v('TglBeli') || (m ? '' : today())}"></div>
+  </div>
+  <div class="sec">Deskripsi (tampil di katalog)</div>
+  <textarea id="f_Deskripsi" maxlength="2000" placeholder="Kelengkapan surat, kondisi mesin, nilai plus, dll.">${v('Deskripsi')}</textarea>
+  <div class="sec">Foto (maks. 10, foto pertama jadi sampul)</div>
+  <input id="fileIn" type="file" accept="image/*" multiple>
+  <div class="hint" style="margin-top:4px">Foto otomatis dikecilkan agar upload cepat. Pilih beberapa sekaligus.</div>
+  <div class="photos" id="photoBox"></div>`,
+  `<button class="btn ghost" id="mCancel" type="button">Batal</button><button class="btn" id="mSave" type="button">Simpan</button>`);
+  ['HargaJual', 'HargaBeli', 'BiayaPerbaikan'].forEach(k => $('f_' + k).addEventListener('input', estLaba));
+  estLaba(); drawPhotos();
+  $('mCancel').onclick = closeModal;
+  $('mSave').onclick = saveMotor;
+  $('fileIn').onchange = e => {
+    const room = 10 - curFotos.length - pend.length;
+    const files = [...e.target.files];
+    if (files.length > room) toast('Maksimal 10 foto. Hanya ' + Math.max(room, 0) + ' foto ditambahkan.', true);
+    files.slice(0, Math.max(room, 0)).forEach(f => pend.push({file: f, url: URL.createObjectURL(f)}));
+    e.target.value = ''; drawPhotos();
+  };
+  $('photoBox').addEventListener('click', onPhotoClick);
+}
+function estLaba() {
+  const g = k => Number($('f_' + k).value) || 0;
+  const l = g('HargaJual') - g('HargaBeli') - g('BiayaPerbaikan');
+  $('estLaba').innerHTML = `Estimasi laba kotor: <b style="color:${l < 0 ? 'var(--bad)' : 'var(--ok)'}">${rp(l)}</b>`;
+}
+function drawPhotos() {
+  const ex = curFotos.map((id, i) => `<div class="ph">${i === 0 ? '<span class="tg">Sampul</span>' : ''}<img src="${img(id, 300)}" alt="" ${imgErr}>
+    <div class="ac">${i !== 0 ? `<button type="button" data-p="cover" data-id="${id}">Jadikan sampul</button>` : ''}<button type="button" data-p="del" data-id="${id}">Hapus</button></div></div>`);
+  const nw = pend.map((p, i) => `<div class="ph"><span class="tg n">Baru</span><img src="${p.url}" alt=""><div class="ac"><button type="button" data-p="rm" data-i="${i}">Batalkan</button></div></div>`);
+  $('photoBox').innerHTML = ex.concat(nw).join('') || '<div class="hint full">Belum ada foto.</div>';
+}
+async function onPhotoClick(e) {
+  const b = e.target.closest('button[data-p]'); if (!b) return;
+  const t = b.dataset.p;
+  if (t === 'rm') { URL.revokeObjectURL(pend[b.dataset.i].url); pend.splice(Number(b.dataset.i), 1); drawPhotos(); return; }
+  try {
+    if (t === 'del') {
+      if (!confirm('Hapus foto ini?')) return;
+      const r = await api('fotoDelete', {motorId: editing.ID, fileId: b.dataset.id}); curFotos = r.foto;
+    } else if (t === 'cover') {
+      const r = await api('fotoCover', {motorId: editing.ID, fileId: b.dataset.id}); curFotos = r.foto;
+    }
+    editing.Foto = curFotos.slice();
+    const mm = S.motor.find(x => x.ID === editing.ID); if (mm) mm.Foto = curFotos.slice();
+    drawPhotos();
+  } catch (err) { toast(err.message, true); }
+}
+function kecilkan(file) {
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), im = new Image();
+    im.onload = () => {
+      const s = Math.min(1, 1280 / Math.max(im.width, im.height));
+      const c = document.createElement('canvas'); c.width = Math.round(im.width * s); c.height = Math.round(im.height * s);
+      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', 0.82).split(',')[1]);
+    };
+    im.onerror = () => { URL.revokeObjectURL(url); rej(new Error('Gagal membaca gambar ' + file.name)); };
+    im.src = url;
+  });
+}
+async function saveMotor() {
+  const F = ['Merek', 'Model', 'Tahun', 'Warna', 'NoPol', 'KM', 'CC', 'Transmisi', 'Kondisi', 'PajakSampai', 'HargaJual', 'HargaBeli', 'BiayaPerbaikan', 'Sumber', 'NamaPenjual', 'HPPenjual', 'TglBeli', 'Status', 'Deskripsi'];
+  const motor = {}; F.forEach(k => { motor[k] = $('f_' + k).value; });
+  if (editing) motor.ID = editing.ID;
+  if (!motor.Merek.trim() || !motor.Model.trim() || !motor.Tahun) { toast('Merek, Model, dan Tahun wajib diisi', true); return; }
+  const btn = $('mSave'); btn.disabled = true; btn.textContent = 'Menyimpan...';
+  let saved;
+  try { saved = await api('motorSave', {motor}); }
+  catch (err) { toast(err.message, true); btn.disabled = false; btn.textContent = 'Simpan'; return; }
+  const gagal = []; let n = 0;
+  for (const p of pend) {
+    n++; btn.textContent = `Unggah foto ${n}/${pend.length}...`;
+    try {
+      const data = await kecilkan(p.file);
+      await api('fotoUpload', {motorId: saved.ID, data});
+    } catch (err) { gagal.push({p, msg: err.message}); }
+  }
+  S.motor = await api('motorList');
+  const fresh = S.motor.find(x => x.ID === saved.ID);
+  if (gagal.length) {
+    const keepP = gagal.map(g => g.p);
+    pend.forEach(p => { if (!keepP.includes(p)) URL.revokeObjectURL(p.url); });
+    pend = keepP;
+    motorModal(fresh, true);
+    toast(`${gagal.length} foto gagal diunggah: ${gagal[0].msg}. Data lain sudah tersimpan.`, true);
+  } else { closeModal(); toast('Motor tersimpan'); }
+  if (S.view === 'stok') listStok();
+}
+
+/* ---------- PENJUALAN ---------- */
+function jualModal(m) {
+  openModal('Jual ' + m.Kode + ' - ' + m.Merek + ' ' + m.Model, `
+  <div class="g2">
+    <div class="fg"><label>Tanggal</label><input id="j_Tanggal" type="date" value="${today()}"></div>
+    <div class="fg"><label>Harga jual akhir (Rp) *</label><input id="j_HargaJual" type="number" inputmode="numeric" value="${esc(m.HargaJual)}"></div>
+    <div class="fg"><label>Nama pembeli *</label><input id="j_NamaPembeli"></div>
+    <div class="fg"><label>HP pembeli</label><input id="j_HPPembeli" inputmode="tel"></div>
+    <div class="fg full"><label>Alamat pembeli</label><input id="j_Alamat"></div>
+    <div class="fg"><label>Metode</label><select id="j_Metode"><option>Tunai</option><option>Kredit Leasing</option><option>Cicilan Showroom</option><option>Tukar Tambah</option></select></div>
+    <div class="fg"><label>DP / uang muka (Rp, kosongkan jika lunas)</label><input id="j_DP" type="number" inputmode="numeric"></div>
+    <div class="fg full"><label>Catatan</label><input id="j_Catatan" placeholder="BPKB menyusul, bonus helm, dll."></div>
+  </div>
+  <div class="est" id="jEst"></div>`,
+  `<button class="btn ghost" id="mCancel" type="button">Batal</button><button class="btn ok" id="mSave" type="button">Catat Penjualan</button>`);
+  const upd = () => {
+    const l = (Number($('j_HargaJual').value) || 0) - Number(m.HargaBeli || 0) - Number(m.BiayaPerbaikan || 0);
+    $('jEst').innerHTML = `Modal ${rp(Number(m.HargaBeli || 0) + Number(m.BiayaPerbaikan || 0))} &middot; Laba kotor: <b style="color:${l < 0 ? 'var(--bad)' : 'var(--ok)'}">${rp(l)}</b>`;
+  };
+  $('j_HargaJual').addEventListener('input', upd); upd();
+  $('mCancel').onclick = closeModal;
+  $('mSave').onclick = async () => {
+    const penjualan = {MotorID: m.ID};
+    ['Tanggal', 'HargaJual', 'NamaPembeli', 'HPPembeli', 'Alamat', 'Metode', 'DP', 'Catatan'].forEach(k => { penjualan[k] = $('j_' + k).value; });
+    const btn = $('mSave'); btn.disabled = true;
+    try {
+      const rec = await api('penjualanSave', {penjualan});
+      S.motor = await api('motorList'); if (S.view === 'stok') listStok();
+      openModal('Penjualan tercatat', `<div class="empty" style="padding:20px 0"><b style="font-size:1.1rem;color:var(--ok)">Berhasil dicatat</b><br>${esc(rec.NamaMotor)} terjual kepada ${esc(rec.NamaPembeli)} seharga ${rp(rec.HargaJual)}.</div>`,
+        `<button class="btn ghost" id="mCancel" type="button">Tutup</button><button class="btn" id="mPrint" type="button">Cetak Kwitansi</button>`);
+      $('mCancel').onclick = closeModal;
+      $('mPrint').onclick = () => kwitansi(rec);
+    } catch (err) { toast(err.message, true); btn.disabled = false; }
+  };
+}
+function viewJual() {
+  if (!S.fBulan) S.fBulan = '';
+  $('view').innerHTML = `<h2 class="t">Penjualan</h2>
+  <div class="tool"><label for="jb" style="margin:0">Bulan:</label><input id="jb" type="month" style="width:auto" value="${esc(S.fBulan)}"><button class="btn ghost sm" id="jall">Semua</button></div>
+  <div id="jsum" class="tiles"></div><div id="jlist"></div>`;
+  $('jb').onchange = e => { S.fBulan = e.target.value; listJual(); };
+  $('jall').onclick = () => { S.fBulan = ''; $('jb').value = ''; listJual(); };
+  $('jlist').addEventListener('click', onJualClick);
+  listJual();
+}
+function listJual() {
+  const list = S.jual.filter(j => !S.fBulan || String(j.Tanggal).slice(0, 7) === S.fBulan);
+  const sum = k => list.reduce((s, x) => s + (Number(x[k]) || 0), 0);
+  $('jsum').innerHTML = `<div class="tile"><small>Unit terjual</small><b>${list.length}</b></div><div class="tile"><small>Omzet</small><b>${rp(sum('HargaJual'))}</b></div><div class="tile"><small>Laba kotor</small><b>${rp(sum('Laba'))}</b></div>`;
+  $('jlist').innerHTML = list.length ? `<div class="panel" style="padding:6px 10px;overflow-x:auto"><table class="tb"><thead><tr><th>Tanggal</th><th>Motor</th><th>Pembeli</th><th>Metode</th><th class="r">Harga</th><th class="r">Laba</th><th></th></tr></thead><tbody>
+  ${list.map(j => `<tr><td>${fmtTgl(j.Tanggal)}</td><td>${esc(j.Kode)}<br><span class="hint">${esc(j.NamaMotor)}</span></td><td>${esc(j.NamaPembeli)}<br><span class="hint">${esc(j.HPPembeli)}</span></td><td>${esc(j.Metode)}</td><td class="r">${rp(j.HargaJual)}</td><td class="r" style="color:${j.Laba < 0 ? 'var(--bad)' : 'var(--ok)'}">${rp(j.Laba)}</td>
+  <td class="r" style="white-space:nowrap"><button class="btn sm ghost" data-a="print" data-id="${j.ID}">Kwitansi</button> <button class="btn sm bad" data-a="batal" data-id="${j.ID}">Batalkan</button></td></tr>`).join('')}
+  </tbody></table></div>` : '<div class="empty">Belum ada penjualan pada periode ini.</div>';
+}
+async function onJualClick(e) {
+  const b = e.target.closest('button[data-a]'); if (!b) return;
+  const j = S.jual.find(x => x.ID === b.dataset.id);
+  if (b.dataset.a === 'print') kwitansi(j);
+  if (b.dataset.a === 'batal') {
+    if (!confirm(`Batalkan penjualan ${j.NamaMotor} ke ${j.NamaPembeli}? Motor akan kembali berstatus Tersedia.`)) return;
+    try { await api('penjualanBatal', {id: j.ID}); S.jual = S.jual.filter(x => x.ID !== j.ID); S.motor = await api('motorList'); listJual(); toast('Penjualan dibatalkan'); } catch (err) { toast(err.message, true); }
+  }
+}
+
+/* ---------- KWITANSI ---------- */
+function terbilang(n) {
+  n = Math.floor(Math.abs(n));
+  const s = ['', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan', 'sepuluh', 'sebelas'];
+  const t = n => {
+    if (n < 12) return s[n];
+    if (n < 20) return t(n - 10) + ' belas';
+    if (n < 100) return t(Math.floor(n / 10)) + ' puluh' + (n % 10 ? ' ' + t(n % 10) : '');
+    if (n < 200) return 'seratus' + (n - 100 ? ' ' + t(n - 100) : '');
+    if (n < 1000) return t(Math.floor(n / 100)) + ' ratus' + (n % 100 ? ' ' + t(n % 100) : '');
+    if (n < 2000) return 'seribu' + (n - 1000 ? ' ' + t(n - 1000) : '');
+    if (n < 1e6) return t(Math.floor(n / 1000)) + ' ribu' + (n % 1000 ? ' ' + t(n % 1000) : '');
+    if (n < 1e9) return t(Math.floor(n / 1e6)) + ' juta' + (n % 1e6 ? ' ' + t(n % 1e6) : '');
+    if (n < 1e12) return t(Math.floor(n / 1e9)) + ' miliar' + (n % 1e9 ? ' ' + t(n % 1e9) : '');
+    return String(n);
+  };
+  return n === 0 ? 'nol' : t(n);
+}
+function kwitansi(j) {
+  const m = S.motor.find(x => x.ID === j.MotorID) || {};
+  const dp = Number(j.DP) || 0, total = Number(j.HargaJual) || 0;
+  const bayar = dp > 0 && dp < total ? dp : total;
+  const ket = dp > 0 && dp < total ? 'uang muka (DP)' : 'pelunasan';
+  const w = window.open('', '_blank');
+  if (!w) { toast('Pop-up diblokir browser. Izinkan pop-up untuk mencetak kwitansi.', true); return; }
+  const nm = esc(S.set.NamaShowroom || 'Showroom');
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  w.document.write(`<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><title>Kwitansi ${esc(j.Kode)}</title>
+  <style>body{font-family:Arial,sans-serif;color:#111;margin:0;padding:28px}.k{max-width:720px;margin:0 auto;border:2px solid #111;padding:26px}
+  h1{margin:0;font-size:22px;letter-spacing:.04em;text-align:center}.sub{text-align:center;font-size:12px;margin:2px 0 16px;color:#444}
+  table{width:100%;border-collapse:collapse;font-size:14px}td{padding:6px 4px;vertical-align:top}td:first-child{width:170px}
+  .amt{margin:14px 0;border:1.5px solid #111;padding:10px 14px;font-size:20px;font-weight:700}.ttd{display:flex;justify-content:space-between;margin-top:34px;font-size:13px;text-align:center}
+  .ttd div{width:44%}.ttd .sp{height:64px}.no{font-size:12px;color:#444;text-align:right}
+  @media print{body{padding:0}.k{border-width:1.5px}}</style></head><body><div class="k">
+  <h1>KWITANSI</h1><div class="sub">${nm}${S.set.Alamat ? ' &middot; ' + esc(S.set.Alamat) : ''}${S.set.WhatsApp ? ' &middot; WA ' + esc(S.set.WhatsApp) : ''}</div>
+  <div class="no">No: ${esc(j.Kode)}/${esc(String(j.Tanggal).replace(/-/g, ''))}/${esc(j.ID)}</div>
+  <table>
+  <tr><td>Telah terima dari</td><td>: <b>${esc(j.NamaPembeli)}</b>${j.Alamat ? '<br>&nbsp; ' + esc(j.Alamat) : ''}</td></tr>
+  <tr><td>Uang sejumlah</td><td>: <i>${esc(cap(terbilang(bayar)))} rupiah</i></td></tr>
+  <tr><td>Untuk pembayaran</td><td>: ${esc(ket)} 1 (satu) unit sepeda motor<br>&nbsp; <b>${esc(j.NamaMotor)}</b>${m.Warna ? ', warna ' + esc(m.Warna) : ''}${m.NoPol ? ', No. Pol ' + esc(m.NoPol) : ''}</td></tr>
+  <tr><td>Metode pembayaran</td><td>: ${esc(j.Metode)}</td></tr>
+  ${dp > 0 && dp < total ? `<tr><td>Harga kesepakatan</td><td>: ${rp(total)} &nbsp;(sisa ${rp(total - dp)})</td></tr>` : ''}
+  ${j.Catatan ? `<tr><td>Catatan</td><td>: ${esc(j.Catatan)}</td></tr>` : ''}
+  </table>
+  <div class="amt">${rp(bayar)}</div>
+  <div class="ttd"><div>Pembeli<div class="sp"></div>( ${esc(j.NamaPembeli)} )</div><div>${esc(fmtTgl(j.Tanggal))}<br>Penerima<div class="sp"></div>( ${esc(j.Admin || S.user.nama)} )</div></div>
+  </div><script>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script></body></html>`);
+  w.document.close();
+}
+
+/* ---------- PROSPEK ---------- */
+function viewPros() {
+  $('view').innerHTML = `<h2 class="t">Prospek & Penawaran</h2>
+  <div class="tool"><select id="pf" style="width:auto"><option value="Baru">Baru</option><option value="Dihubungi">Dihubungi</option><option value="Selesai">Selesai</option><option value="semua">Semua</option></select></div>
+  <div id="plist"></div>`;
+  $('pf').value = S.fPros;
+  $('pf').onchange = e => { S.fPros = e.target.value; listPros(); };
+  $('plist').addEventListener('click', onProsClick);
+  listPros();
+}
+function listPros() {
+  const list = S.pros.filter(p => S.fPros === 'semua' || p.Status === S.fPros);
+  $('plist').innerHTML = list.length ? list.map(p => `
+  <div class="panel" style="padding:12px 14px">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="bdg ${esc(p.Jenis)}">${p.Jenis === 'Jual' ? 'Mau jual motor' : p.Jenis === 'Beli' ? 'Minat beli' : 'Tanya'}</span><span class="bdg ${esc(p.Status)}">${esc(p.Status)}</span><span class="hint">${esc(String(p.Tanggal).slice(0, 16))}</span></div>
+    <div style="margin-top:6px"><b>${esc(p.Nama)}</b> &middot; ${esc(p.HP)}</div>
+    ${p.NamaMotor ? `<div class="hint">Motor: ${esc(p.NamaMotor)}</div>` : ''}
+    ${p.Pesan ? `<div style="margin-top:4px;font-size:.92rem">${esc(p.Pesan)}</div>` : ''}
+    <div class="acts" style="justify-content:flex-start;margin-top:10px">
+      <a class="btn sm ok" target="_blank" rel="noopener" style="text-decoration:none" href="https://wa.me/${waNum(p.HP)}">WhatsApp</a>
+      ${p.Status !== 'Dihubungi' ? `<button class="btn sm ghost" data-s="Dihubungi" data-id="${p.ID}">Tandai dihubungi</button>` : ''}
+      ${p.Status !== 'Selesai' ? `<button class="btn sm ghost" data-s="Selesai" data-id="${p.ID}">Selesai</button>` : ''}
+    </div></div>`).join('') : '<div class="empty">Tidak ada data.</div>';
+}
+async function onProsClick(e) {
+  const b = e.target.closest('button[data-s]'); if (!b) return;
+  try { await api('prospekStatus', {id: b.dataset.id, status: b.dataset.s}); S.pros.find(x => x.ID === b.dataset.id).Status = b.dataset.s; listPros(); } catch (err) { toast(err.message, true); }
+}
+
+/* ---------- PENGATURAN ---------- */
+async function viewSet() {
+  const sup = S.user.role === 'SuperAdmin';
+  S.set = await api('settingsGet');
+  const dis = sup ? '' : 'disabled';
+  const sv = k => esc(S.set[k] || '');
+  $('view').innerHTML = `<h2 class="t">Pengaturan</h2>
+  <div class="panel"><h3>Profil showroom ${sup ? '' : '<span class="hint">(hanya Super Admin yang dapat mengubah)</span>'}</h3>
+    <div class="g2">
+      <div class="fg"><label>Nama showroom</label><input id="s_NamaShowroom" ${dis} value="${sv('NamaShowroom')}"></div>
+      <div class="fg"><label>Nomor WhatsApp (format 62812...)</label><input id="s_WhatsApp" ${dis} inputmode="tel" value="${sv('WhatsApp')}"></div>
+      <div class="fg full"><label>Tagline</label><input id="s_Tagline" ${dis} value="${sv('Tagline')}"></div>
+      <div class="fg full"><label>Alamat</label><input id="s_Alamat" ${dis} value="${sv('Alamat')}"></div>
+      <div class="fg"><label>Jam buka</label><input id="s_JamBuka" ${dis} value="${sv('JamBuka')}"></div>
+      <div class="fg"><label>Link Google Maps</label><input id="s_MapsUrl" ${dis} value="${sv('MapsUrl')}"></div>
+    </div>${sup ? '<button class="btn" id="sSave">Simpan profil</button>' : ''}</div>
+  <div class="panel"><h3>Ganti PIN saya</h3>
+    <div class="g2"><div class="fg"><label>PIN lama</label><input id="p_lama" type="password" inputmode="numeric" autocomplete="current-password"></div>
+    <div class="fg"><label>PIN baru (6-12 digit)</label><input id="p_baru" type="password" inputmode="numeric" autocomplete="new-password"></div></div>
+    <button class="btn" id="pSave">Ganti PIN</button></div>
+  <div id="adminBox"></div>`;
+  if (sup) $('sSave').onclick = async () => {
+    const settings = {}; ['NamaShowroom', 'WhatsApp', 'Tagline', 'Alamat', 'JamBuka', 'MapsUrl'].forEach(k => { settings[k] = $('s_' + k).value; });
+    try { S.set = await api('settingsSave', {settings}); $('bName').textContent = S.set.NamaShowroom; toast('Profil tersimpan'); } catch (err) { toast(err.message, true); }
+  };
+  $('pSave').onclick = async () => {
+    try { await api('pinGanti', {pinLama: $('p_lama').value, pinBaru: $('p_baru').value}); $('p_lama').value = ''; $('p_baru').value = ''; toast('PIN berhasil diganti'); } catch (err) { toast(err.message, true); }
+  };
+  if (sup) await drawAdmins();
+}
+async function drawAdmins() {
+  const list = await api('adminList');
+  $('adminBox').innerHTML = `<div class="panel"><h3>Kelola admin <button class="btn sm" id="aAdd" style="float:right">+ Admin</button></h3>
+  <table class="tb"><thead><tr><th>Username</th><th>Nama</th><th>Peran</th><th>Aktif</th><th></th></tr></thead><tbody>
+  ${list.map(a => `<tr><td>${esc(a.Username)}</td><td>${esc(a.Nama)}</td><td>${esc(a.Role)}</td><td>${esc(a.Aktif)}</td><td class="r"><button class="btn sm ghost" data-u="${esc(a.Username)}">Ubah</button></td></tr>`).join('')}
+  </tbody></table></div>`;
+  $('aAdd').onclick = () => adminModal(null);
+  $('adminBox').onclick = e => { const b = e.target.closest('button[data-u]'); if (b) adminModal(list.find(x => x.Username === b.dataset.u)); };
+}
+function adminModal(a) {
+  openModal(a ? 'Ubah admin ' + a.Username : 'Tambah admin', `
+  <div class="g2">
+    <div class="fg"><label>Username</label><input id="a_u" ${a ? 'disabled' : ''} value="${esc(a ? a.Username : '')}" autocapitalize="none"></div>
+    <div class="fg"><label>Nama</label><input id="a_n" value="${esc(a ? a.Nama : '')}"></div>
+    <div class="fg"><label>Peran</label><select id="a_r">${opt(['Admin', 'SuperAdmin'], a ? a.Role : 'Admin')}</select></div>
+    <div class="fg"><label>Aktif</label><select id="a_a">${opt(['Ya', 'Tidak'], a ? a.Aktif : 'Ya')}</select></div>
+    <div class="fg full"><label>${a ? 'Reset PIN (kosongkan jika tidak diganti)' : 'PIN (6-12 digit)'}</label><input id="a_p" type="password" inputmode="numeric" autocomplete="new-password"></div>
+  </div>`,
+  `<button class="btn ghost" id="mCancel" type="button">Batal</button><button class="btn" id="mSave" type="button">Simpan</button>`);
+  $('mCancel').onclick = closeModal;
+  $('mSave').onclick = async () => {
+    try {
+      await api('adminSave', {admin: {Username: $('a_u').value, Nama: $('a_n').value, Role: $('a_r').value, Aktif: $('a_a').value, Pin: $('a_p').value}});
+      closeModal(); toast('Admin tersimpan'); drawAdmins();
+    } catch (err) { toast(err.message, true); }
+  };
+}
+
+/* ---------- start ---------- */
+if (S.token && S.user) showApp();
+</script>
+</body>
+</html>
