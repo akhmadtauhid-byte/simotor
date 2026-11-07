@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Katalog Motor</title>
+<meta name="description" content="Katalog motor bekas berkualitas">
+<style>
+:root{
+  --ink:#16202b; --muted:#5d6b7a; --line:#e3e0d9; --bg:#f7f5f0; --card:#fff;
+  --brand:#d9480f; --brand-d:#b83a0a; --ok:#2b8a3e; --warn:#e67700; --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-text-size-adjust:100%}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:20;background:rgba(247,245,240,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:14px;height:60px}
+.logo{font-weight:800;font-size:1.1rem;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo i{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--brand);color:#fff;font-style:normal;font-size:.95rem}
+nav{margin-left:auto;display:flex;gap:6px;align-items:center}
+nav a{padding:8px 12px;border-radius:999px;text-decoration:none;font-size:.92rem;color:var(--muted)}
+nav a:hover{background:#ece8df;color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:11px 20px;font-weight:650;cursor:pointer;background:var(--brand);color:#fff;text-decoration:none;transition:.15s}
+.btn:hover{background:var(--brand-d)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.ghost:hover{background:#ece8df}
+.btn.wa{background:#1f9d55}.btn.wa:hover{background:#17803f}
+.btn[disabled]{opacity:.6;cursor:not-allowed}
+.hero{padding:40px 0 22px}
+.hero h1{font-size:clamp(1.7rem,4.6vw,2.7rem);letter-spacing:-.02em;line-height:1.15;max-width:760px}
+.hero p{color:var(--muted);margin-top:10px;max-width:620px;font-size:1.05rem}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:10px;margin-top:22px}
+.filters input,.filters select{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;min-height:46px}
+.filters input:focus,.filters select:focus,.form input:focus,.form select:focus,.form textarea:focus{outline:2px solid var(--brand);outline-offset:1px;border-color:transparent}
+.count{margin:18px 0 12px;color:var(--muted);font-size:.93rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px}
+.card{background:var(--card);border-radius:var(--r);overflow:hidden;border:1px solid var(--line);cursor:pointer;transition:.18s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(22,32,43,.1)}
+.card:focus-visible{outline:3px solid var(--brand)}
+.ph{position:relative;aspect-ratio:4/3;background:#e9e5db;overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.badge{position:absolute;top:10px;left:10px;background:var(--ok);color:#fff;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px}
+.badge.booking{background:var(--warn)}
+.cnt{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.6);color:#fff;font-size:.72rem;padding:3px 9px;border-radius:999px}
+.cb{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.cb h3{font-size:1.04rem;line-height:1.3}
+.meta{display:flex;flex-wrap:wrap;gap:6px 12px;color:var(--muted);font-size:.84rem}
+.price{margin-top:auto;padding-top:6px;font-size:1.25rem;font-weight:800;color:var(--brand)}
+.empty,.err{text-align:center;padding:60px 16px;color:var(--muted)}
+.skel{height:300px;border-radius:var(--r);background:linear-gradient(90deg,#ebe7dd 25%,#f4f1ea 37%,#ebe7dd 63%);background-size:400% 100%;animation:sh 1.3s infinite}
+@keyframes sh{0%{background-position:100% 0}100%{background-position:0 0}}
+section.block{margin:56px 0 0;background:#fff;border:1px solid var(--line);border-radius:20px;padding:28px}
+section.block h2{font-size:1.5rem;letter-spacing:-.01em}
+section.block>p{color:var(--muted);margin:6px 0 18px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form .full{grid-column:1/-1}
+.form label{display:block;font-size:.85rem;font-weight:600;margin-bottom:4px}
+.form input,.form select,.form textarea{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:12px;background:#fff;min-height:44px}
+.form textarea{min-height:90px;resize:vertical}
+.hp{position:absolute;left:-9999px;opacity:0;height:0;width:0}
+.msg{padding:11px 14px;border-radius:12px;font-size:.92rem;margin-top:10px}
+.msg.ok{background:#e6f4ea;color:#1e6b34}.msg.bad{background:#fdecea;color:#a12622}
+footer{margin:56px 0 0;background:var(--ink);color:#cfd6dd;padding:34px 0 40px;font-size:.92rem}
+footer h4{color:#fff;margin-bottom:6px}
+footer .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px}
+footer a{color:#ffd8c2}
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(15,22,30,.62);z-index:50;display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:18px 12px}
+.ov.on{display:flex}
+.modal{background:#fff;border-radius:20px;max-width:980px;width:100%;position:relative;overflow:hidden;margin:auto}
+.x{position:absolute;top:10px;right:10px;z-index:3;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.92);font-size:1.4rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.dg{display:grid;grid-template-columns:1.15fr 1fr}
+.gal .main{aspect-ratio:4/3;background:#e9e5db}
+.gal .main img{width:100%;height:100%;object-fit:cover;display:block}
+.thumbs{display:flex;gap:8px;padding:10px;overflow-x:auto}
+.thumbs img{width:68px;height:52px;object-fit:cover;border-radius:8px;border:2px solid transparent;cursor:pointer;flex:none;opacity:.75}
+.thumbs img.on{border-color:var(--brand);opacity:1}
+.di{padding:24px 22px}
+.di h2{font-size:1.4rem;line-height:1.25;padding-right:34px}
+.di .price{font-size:1.7rem;margin:8px 0 14px}
+table.spec{width:100%;border-collapse:collapse;font-size:.92rem;margin-bottom:14px}
+table.spec td{padding:7px 0;border-bottom:1px solid var(--line)}
+table.spec td:first-child{color:var(--muted);width:42%}
+.desc{white-space:pre-line;color:#34424f;font-size:.93rem;margin-bottom:16px}
+.acts{display:flex;gap:10px;flex-wrap:wrap}
+.acts .btn{flex:1;min-width:150px}
+#minatForm{margin-top:16px;padding-top:16px;border-top:1px dashed var(--line);display:none}
+#minatForm.on{display:block}
+@media(max-width:860px){
+  .filters{grid-template-columns:1fr 1fr}.filters input{grid-column:1/-1}
+  .dg{grid-template-columns:1fr}
+  nav a.hide-m{display:none}
+}
+@media(max-width:560px){.form{grid-template-columns:1fr}section.block{padding:20px 16px}.hero{padding-top:26px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#"><i>M</i><span id="brand">Katalog Motor</span></a>
+    <nav>
+      <a href="#katalog" class="hide-m">Katalog</a>
+      <a href="#jual" class="hide-m">Jual Motor Anda</a>
+      <a href="#kontak" class="hide-m">Kontak</a>
+      <a class="btn wa" id="waTop" href="#" target="_blank" rel="noopener">WhatsApp</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <h1 id="heroTitle">Temukan motor impian Anda</h1>
+    <p id="tagline">Motor bekas berkualitas, surat lengkap, harga transparan.</p>
+    <div class="filters" role="search">
+      <input id="q" type="search" placeholder="Cari merek, model, warna..." aria-label="Cari motor">
+      <select id="fMerek" aria-label="Merek"><option value="">Semua merek</option></select>
+      <select id="fTrans" aria-label="Transmisi"><option value="">Semua transmisi</option></select>
+      <select id="fHarga" aria-label="Harga maksimum">
+        <option value="">Semua harga</option>
+        <option value="10000000">&le; Rp 10 juta</option>
+        <option value="15000000">&le; Rp 15 juta</option>
+        <option value="20000000">&le; Rp 20 juta</option>
+        <option value="30000000">&le; Rp 30 juta</option>
+        <option value="50000000">&le; Rp 50 juta</option>
+      </select>
+      <select id="fUrut" aria-label="Urutkan">
+        <option value="baru">Terbaru masuk</option>
+        <option value="murah">Harga terendah</option>
+        <option value="mahal">Harga tertinggi</option>
+        <option value="tahun">Tahun terbaru</option>
+        <option value="km">KM terendah</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="katalog" class="count" aria-live="polite"></div>
+  <div id="grid" class="grid"></div>
+
+  <section class="block" id="jual">
+    <h2>Mau jual atau tukar tambah motor Anda?</h2>
+    <p>Isi data singkat di bawah. Tim kami akan menghubungi Anda via WhatsApp untuk penawaran harga terbaik.</p>
+    <form class="form" id="jualForm" novalidate>
+      <div><label for="jNama">Nama</label><input id="jNama" required maxlength="80" autocomplete="name"></div>
+      <div><label for="jHP">No. WhatsApp</label><input id="jHP" required inputmode="tel" maxlength="20" placeholder="08xxxxxxxxxx" autocomplete="tel"></div>
+      <div><label for="jMotor">Motor (merek, model, tahun)</label><input id="jMotor" maxlength="100" placeholder="Honda Beat 2019"></div>
+      <div><label for="jHarga">Harga yang diharapkan (opsional)</label><input id="jHarga" inputmode="numeric" maxlength="15" placeholder="12000000"></div>
+      <div class="full"><label for="jPesan">Kondisi / catatan</label><textarea id="jPesan" maxlength="600" placeholder="Pajak hidup sampai kapan, kondisi mesin, surat-surat, dll."></textarea></div>
+      <input class="hp" type="text" id="jWeb" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="full"><button class="btn" id="jBtn" type="submit">Kirim Penawaran</button><div id="jMsg"></div></div>
+    </form>
+  </section>
+</main>
+
+<footer id="kontak">
+  <div class="wrap cols">
+    <div><h4 id="fNama">Showroom</h4><div id="fAlamat"></div><div id="fJam"></div></div>
+    <div><h4>Hubungi kami</h4><div><a id="fWA" href="#" target="_blank" rel="noopener">WhatsApp</a></div><div><a id="fMaps" href="#" target="_blank" rel="noopener" style="display:none">Lihat di Google Maps</a></div></div>
+    <div><h4>Catatan</h4><div>Harga dan ketersediaan dapat berubah sewaktu-waktu. Silakan datang atau hubungi kami untuk melihat unit langsung.</div></div>
+  </div>
+</footer>
+
+<div class="ov" id="ov" role="dialog" aria-modal="true" aria-label="Detail motor">
+  <div class="modal">
+    <button class="x" id="xBtn" aria-label="Tutup">&times;</button>
+    <div class="dg">
+      <div class="gal"><div class="main"><img id="gMain" alt=""></div><div class="thumbs" id="gThumbs"></div></div>
+      <div class="di">
+        <h2 id="dTitle"></h2>
+        <div class="price" id="dPrice"></div>
+        <table class="spec" id="dSpec"></table>
+        <div class="desc" id="dDesc"></div>
+        <div class="acts">
+          <a class="btn wa" id="dWA" href="#" target="_blank" rel="noopener">Chat WhatsApp</a>
+          <button class="btn ghost" id="dMinat" type="button">Saya Berminat</button>
+        </div>
+        <form class="form" id="minatForm" novalidate>
+          <div><label for="mNama">Nama</label><input id="mNama" required maxlength="80" autocomplete="name"></div>
+          <div><label for="mHP">No. WhatsApp</label><input id="mHP" required inputmode="tel" maxlength="20" autocomplete="tel"></div>
+          <div class="full"><label for="mPesan">Pesan (opsional)</label><textarea id="mPesan" maxlength="600" placeholder="Contoh: Bisa survey hari Sabtu? Apakah bisa kredit?"></textarea></div>
+          <input class="hp" type="text" id="mWeb" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div class="full"><button class="btn" id="mBtn" type="submit">Kirim</button><div id="mMsg"></div></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====== WAJIB DIISI: URL Web App Apps Script (berakhiran /exec) ======
+const API_URL = 'https://script.google.com/macros/s/AKfycbzXoI6_0gU5mDnfpi7nifeS_46iTJY5HxMUP92FIRD2YGhEmuPEesdzyLKLMSJTGwiM/exec';
+// =====================================================================
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rp = n => 'Rp ' + new Intl.NumberFormat('id-ID').format(Number(n) || 0);
+const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="#e9e5db"/><g fill="none" stroke="#b9b3a3" stroke-width="8" stroke-linecap="round"><circle cx="120" cy="190" r="42"/><circle cx="285" cy="190" r="42"/><path d="M120 190l55-70h60l50 70M175 120l-12-22h-28M235 120l-8 30h-52"/></g></svg>');
+const img = (id, w) => id ? `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w${w || 800}` : PLACEHOLDER;
+
+let DATA = {settings: {}, motor: []};
+let current = null;
+
+async function api(params) {
+  if (API_URL.indexOf('GANTI_') === 0) throw new Error('API_URL belum diisi pada index.html');
+  const isGet = params.action === 'list';
+  const res = isGet
+    ? await fetch(API_URL + '?action=list')
+    : await fetch(API_URL, {method: 'POST', body: JSON.stringify(params)});
+  const j = await res.json();
+  if (!j.ok) throw new Error(j.error || 'Terjadi kesalahan');
+  return j.data;
+}
+
+function waLink(text) {
+  const n = String(DATA.settings.WhatsApp || '').replace(/\D/g, '');
+  return 'https://wa.me/' + n + (text ? '?text=' + encodeURIComponent(text) : '');
+}
+
+function applySettings(s) {
+  const nama = s.NamaShowroom || 'Katalog Motor';
+  document.title = nama + ' - Katalog Motor';
+  $('brand').textContent = nama;
+  $('fNama').textContent = nama;
+  if (s.Tagline) $('tagline').textContent = s.Tagline;
+  $('fAlamat').textContent = s.Alamat || '';
+  $('fJam').textContent = s.JamBuka || '';
+  const wa = waLink('Halo ' + nama + ', saya ingin bertanya tentang motor.');
+  $('waTop').href = wa; $('fWA').href = wa;
+  if (s.MapsUrl) { $('fMaps').href = s.MapsUrl; $('fMaps').style.display = ''; }
+}
+
+function fillSelect(sel, vals, first) {
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">' + first + '</option>' + vals.map(v => `<option>${esc(v)}</option>`).join('');
+  sel.value = vals.indexOf(cur) >= 0 ? cur : '';
+}
+
+function render() {
+  const q = $('q').value.trim().toLowerCase();
+  const mk = $('fMerek').value, tr = $('fTrans').value, hg = Number($('fHarga').value) || 0, ur = $('fUrut').value;
+  let list = DATA.motor.filter(m => {
+    if (mk && m.Merek !== mk) return false;
+    if (tr && m.Transmisi !== tr) return false;
+    if (hg && Number(m.HargaJual) > hg) return false;
+    if (q && (m.Merek + ' ' + m.Model + ' ' + m.Warna + ' ' + m.Tahun).toLowerCase().indexOf(q) < 0) return false;
+    return true;
+  });
+  const sorts = {
+    murah: (a, b) => a.HargaJual - b.HargaJual, mahal: (a, b) => b.HargaJual - a.HargaJual,
+    tahun: (a, b) => b.Tahun - a.Tahun, km: (a, b) => a.KM - b.KM
+  };
+  if (sorts[ur]) list = list.slice().sort(sorts[ur]);
+  $('katalog').textContent = list.length + ' motor ditemukan';
+  if (!list.length) {
+    $('grid').innerHTML = '<div class="empty" style="grid-column:1/-1"><b>Belum ada motor yang cocok.</b><br>Coba ubah filter, atau hubungi kami via WhatsApp untuk request unit.</div>';
+    return;
+  }
+  $('grid').innerHTML = list.map(m => `
+    <article class="card" tabindex="0" data-id="${esc(m.ID)}" aria-label="${esc(m.Merek + ' ' + m.Model)}">
+      <div class="ph">
+        <img loading="lazy" src="${img(m.Foto[0], 600)}" alt="${esc(m.Merek + ' ' + m.Model + ' ' + m.Tahun)}" onerror="this.onerror=null;this.src='${PLACEHOLDER}'">
+        <span class="badge ${m.Status === 'Booking' ? 'booking' : ''}">${m.Status === 'Booking' ? 'Sudah Dibooking' : 'Tersedia'}</span>
+        ${m.Foto.length > 1 ? `<span class="cnt">${m.Foto.length} foto</span>` : ''}
+      </div>
+      <div class="cb">
+        <h3>${esc(m.Merek)} ${esc(m.Model)}</h3>
+        <div class="meta"><span>${esc(m.Tahun)}</span><span>${new Intl.NumberFormat('id-ID').format(m.KM || 0)} km</span><span>${esc(m.Transmisi || '')}</span><span>${esc(m.Warna || '')}</span></div>
+        <div class="price">${rp(m.HargaJual)}</div>
+      </div>
+    </article>`).join('');
+}
+
+function openDetail(id, noHash) {
+  const m = DATA.motor.find(x => x.ID === id);
+  if (!m) return;
+  current = m;
+  const nama = `${m.Merek} ${m.Model} ${m.Tahun}`;
+  $('dTitle').textContent = nama;
+  $('dPrice').textContent = rp(m.HargaJual);
+  const pajak = m.PajakSampai ? new Date(m.PajakSampai + 'T00:00:00').toLocaleDateString('id-ID', {month: 'long', year: 'numeric'}) : '-';
+  const rows = [['Kode', m.Kode], ['Tahun', m.Tahun], ['Kilometer', new Intl.NumberFormat('id-ID').format(m.KM || 0) + ' km'],
+    ['Warna', m.Warna || '-'], ['Mesin', m.CC ? m.CC + ' cc' : '-'], ['Transmisi', m.Transmisi || '-'], ['Kondisi', m.Kondisi || '-'], ['Pajak s/d', pajak]];
+  $('dSpec').innerHTML = rows.map(r => `<tr><td>${r[0]}</td><td>${esc(r[1])}</td></tr>`).join('');
+  $('dDesc').textContent = m.Deskripsi || '';
+  const fotos = m.Foto.length ? m.Foto : [''];
+  const setMain = i => {
+    $('gMain').src = img(fotos[i], 1000);
+    $('gMain').alt = nama;
+    [...$('gThumbs').children].forEach((t, k) => t.classList.toggle('on', k === i));
+  };
+  $('gThumbs').innerHTML = fotos.length > 1 ? fotos.map((f, i) => `<img src="${img(f, 200)}" alt="Foto ${i + 1}" data-i="${i}" onerror="this.onerror=null;this.src='${PLACEHOLDER}'">`).join('') : '';
+  $('gThumbs').onclick = e => { const t = e.target.closest('img'); if (t) setMain(Number(t.dataset.i)); };
+  $('gMain').onerror = function () { this.onerror = null; this.src = PLACEHOLDER; };
+  setMain(0);
+  $('dWA').href = waLink(`Halo, saya tertarik dengan ${nama} (${m.Kode}) harga ${rp(m.HargaJual)}. Apakah masih tersedia?`);
+  $('minatForm').classList.remove('on');
+  $('mMsg').innerHTML = '';
+  $('ov').classList.add('on');
+  document.body.style.overflow = 'hidden';
+  if (!noHash) history.replaceState(null, '', '#m=' + m.ID);
+}
+function closeDetail() {
+  $('ov').classList.remove('on');
+  document.body.style.overflow = '';
+  history.replaceState(null, '', location.pathname + location.search);
+}
+
+async function kirim(form) {
+  const btn = form.btn, msg = form.msg;
+  btn.disabled = true; const old = btn.textContent; btn.textContent = 'Mengirim...';
+  msg.innerHTML = '';
+  try {
+    await api(form.payload);
+    msg.innerHTML = '<div class="msg ok">Terima kasih! Data Anda sudah kami terima dan akan segera kami hubungi.</div>';
+    form.reset();
+  } catch (e) {
+    msg.innerHTML = '<div class="msg bad">' + esc(e.message) + '</div>';
+  }
+  btn.disabled = false; btn.textContent = old;
+}
+
+$('minatForm').addEventListener('submit', e => {
+  e.preventDefault();
+  kirim({
+    btn: $('mBtn'), msg: $('mMsg'), reset: () => { $('mPesan').value = ''; },
+    payload: {action: 'prospek', Jenis: 'Beli', MotorID: current.ID, Nama: $('mNama').value, HP: $('mHP').value, Pesan: $('mPesan').value, website: $('mWeb').value}
+  });
+});
+$('jualForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const pesan = ['Motor: ' + $('jMotor').value, $('jHarga').value ? 'Harapan harga: ' + rp($('jHarga').value.replace(/\D/g, '')) : '', $('jPesan').value].filter(Boolean).join(' | ');
+  kirim({
+    btn: $('jBtn'), msg: $('jMsg'), reset: () => { $('jualForm').reset(); },
+    payload: {action: 'prospek', Jenis: 'Jual', Nama: $('jNama').value, HP: $('jHP').value, Pesan: pesan, website: $('jWeb').value}
+  });
+});
+
+$('grid').addEventListener('click', e => { const c = e.target.closest('.card'); if (c) openDetail(c.dataset.id); });
+$('grid').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { const c = e.target.closest('.card'); if (c) { e.preventDefault(); openDetail(c.dataset.id); } } });
+$('xBtn').onclick = closeDetail;
+$('ov').addEventListener('click', e => { if (e.target === $('ov')) closeDetail(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('ov').classList.contains('on')) closeDetail(); });
+$('dMinat').onclick = () => { $('minatForm').classList.toggle('on'); if ($('minatForm').classList.contains('on')) $('mNama').focus(); };
+['q', 'fMerek', 'fTrans', 'fHarga', 'fUrut'].forEach(id => $(id).addEventListener(id === 'q' ? 'input' : 'change', render));
+
+function load(data) {
+  DATA = data;
+  applySettings(data.settings || {});
+  fillSelect($('fMerek'), [...new Set(data.motor.map(m => m.Merek).filter(Boolean))].sort(), 'Semua merek');
+  fillSelect($('fTrans'), [...new Set(data.motor.map(m => m.Transmisi).filter(Boolean))].sort(), 'Semua transmisi');
+  render();
+  const h = location.hash.match(/^#m=(\w+)/);
+  if (h && !$('ov').classList.contains('on')) openDetail(h[1], true);
+}
+
+(async function init() {
+  $('grid').innerHTML = '<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
+  try {
+    const cached = sessionStorage.getItem('simotor_list');
+    if (cached) load(JSON.parse(cached));
+  } catch (e) { /* abaikan */ }
+  try {
+    const fresh = await api({action: 'list'});
+    try { sessionStorage.setItem('simotor_list', JSON.stringify(fresh)); } catch (e) { /* abaikan */ }
+    load(fresh);
+  } catch (e) {
+    if (!DATA.motor.length) $('grid').innerHTML = '<div class="err" style="grid-column:1/-1"><b>Katalog belum dapat dimuat.</b><br>' + esc(e.message) + '</div>';
+    $('katalog').textContent = '';
+  }
+})();
+</script>
+</body>
+</html>
